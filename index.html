@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Staff Application - Minecraft Portfolio</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap');
+
+body {
+    margin: 0;
+    font-family: 'Orbitron', sans-serif;
+    background: #05010a;
+    color: white;
+    overflow-x: hidden;
+}
+
+/* ===== CANVAS BACKGROUND ===== */
+#bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+}
+
+/* ===== LAYOUT ===== */
+.container {
+    position: relative;
+    z-index: 2;
+    max-width: 1100px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* ===== HERO ===== */
+.hero {
+    text-align: center;
+    padding: 60px 20px 30px;
+}
+
+.hero h1 {
+    font-size: 28px;
+    color: #c77dff;
+    text-shadow: 0 0 15px #7b2cbf;
+}
+
+.hero p {
+    opacity: 0.7;
+}
+
+/* ===== STATS ===== */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin: 30px 0;
+}
+
+.stat {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(199,125,255,0.2);
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(123,44,191,0.2);
+}
+
+/* ===== FILTERS ===== */
+.filters {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.filters button {
+    margin: 5px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid #7b2cbf;
+    background: transparent;
+    color: white;
+    cursor: pointer;
+}
+
+.filters button:hover {
+    background: #7b2cbf;
+}
+
+/* ===== TIMELINE ===== */
+.timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(199,125,255,0.15);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 20px rgba(199,125,255,0.3);
+}
+
+.role {
+    color: #e0aaff;
+    font-weight: bold;
+}
+
+.server {
+    font-size: 16px;
+}
+
+/* ===== SKILLS ===== */
+.skills {
+    margin-top: 40px;
+}
+
+.skill {
+    margin: 10px 0;
+}
+
+.bar {
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.fill {
+    height: 100%;
+    background: linear-gradient(90deg, #7b2cbf, #c77dff);
+}
+
+/* ===== MODAL ===== */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.modal-box {
+    background: #120022;
+    padding: 20px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    border: 1px solid #7b2cbf;
+}
+
+.close {
+    float: right;
+    cursor: pointer;
+    color: red;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="bg"></canvas>
+
+<div class="container">
+
+<!-- HERO -->
+<div class="hero">
+    <h1>Staff Application Portfolio</h1>
+    <p>IGN: hate075 → hate076</p>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+    <div class="stat">🟣 Server: 9+</div>
+    <div class="stat">⏳ Esperienza: ~5 anni</div>
+    <div class="stat">🧩 Ruoli: Helper → Co-Owner</div>
+    <div class="stat">🏆 Server chiusi: molti</div>
+</div>
+
+<!-- FILTERS -->
+<div class="filters">
+    <button onclick="filter('all')">Tutti</button>
+    <button onclick="filter('helper')">Helper</button>
+    <button onclick="filter('mod')">Mod</button>
+    <button onclick="filter('admin')">Admin+</button>
+</div>
+
+<!-- TIMELINE -->
+<div class="timeline" id="timeline"></div>
+
+<!-- SKILLS -->
+<div class="skills">
+    <h2>Skill</h2>
+
+    <div class="skill">
+        Moderazione Chat
+        <div class="bar"><div class="fill" style="width:90%"></div></div>
+    </div>
+
+    <div class="skill">
+        Gestione Staff
+        <div class="bar"><div class="fill" style="width:85%"></div></div>
+    </div>
+
+    <div class="skill">
+        Problem Solving
+        <div class="bar"><div class="fill" style="width:88%"></div></div>
+    </div>
+
+    <div class="skill">
+        Leadership
+        <div class="bar"><div class="fill" style="width:80%"></div></div>
+    </div>
+</div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+    <div class="modal-box">
+        <span class="close" onclick="closeModal()">X</span>
+        <h2 id="mTitle"></h2>
+        <p id="mInfo"></p>
+        <p id="mReason"></p>
+    </div>
+</div>
+
+<script>
+const data = [
+ {server:"NovaWorld", role:"SrMod", type:"mod", time:"1 anno e mezzo", reason:"Server chiuso"},
+ {server:"LattinaCraft", role:"Co-Owner", type:"admin", time:"3 anni", reason:"Server chiuso"},
+ {server:"MiddleHeart", role:"Helper+", type:"helper", time:"3/4 mesi", reason:"Motivi personali"},
+ {server:"Emirates", role:"Staff Manager", type:"admin", time:"3/4 mesi", reason:"Motivi personali"},
+ {server:"FusionMc", role:"Helper", type:"helper", time:"24 giorni", reason:"Motivi personali"},
+ {server:"Lyzard", role:"SrAdmin", type:"admin", time:"1 anno", reason:"Depex"},
+ {server:"WarAccademy", role:"Supporter", type:"helper", time:"breve periodo", reason:"Problemi personali"},
+ {server:"CoralMc", role:"Helper", type:"helper", time:"1 mese", reason:"-"},
+ {server:"AlphaNet", role:"SrMod", type:"mod", time:"4 mesi", reason:"Chiuso"}
+];
+
+const timeline = document.getElementById("timeline");
+
+function render(filterType="all"){
+ timeline.innerHTML = "";
+
+ data.forEach(d=>{
+  if(filterType!="all" && d.type!=filterType) return;
+
+  let card = document.createElement("div");
+  card.className="card";
+
+  card.innerHTML=`
+    <div>
+        <div class="role">${d.role}</div>
+        <div class="server">${d.server}</div>
+    </div>
+    <div>${d.time}</div>
+  `;
+
+  card.onclick=()=>openModal(d);
+  timeline.appendChild(card);
+ });
+}
+
+function openModal(d){
+ document.getElementById("modal").style.display="flex";
+ document.getElementById("mTitle").innerText=d.server+" - "+d.role;
+ document.getElementById("mInfo").innerText="Durata: "+d.time;
+ document.getElementById("mReason").innerText="Motivo: "+d.reason;
+}
+
+function closeModal(){
+ document.getElementById("modal").style.display="none";
+}
+
+function filter(t){render(t);}
+render();
+
+/* ===== STAR CANVAS ===== */
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let stars = [];
+for(let i=0;i<150;i++){
+ stars.push({
+  x:Math.random()*canvas.width,
+  y:Math.random()*canvas.height,
+  r:Math.random()*1.5
+ });
+}
+
+function animate(){
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ ctx.fillStyle="white";
+ stars.forEach(s=>{
+  s.y += 0.2;
+  if(s.y > canvas.height) s.y = 0;
+
+  ctx.beginPath();
+  ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+  ctx.fill();
+ });
+
+ requestAnimationFrame(animate);
+}
+animate();
+</script>
+
+</body>
+</html>
