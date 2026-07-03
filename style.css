@@ -1,48 +1,23 @@
-body{
-margin:0;
-font-family:system-ui;
-background:#0b0f19;
-color:white;
+// COUNTERS
+function count(id,end){
+let el=document.getElementById(id);
+let i=0;
+let t=setInterval(()=>{
+i++;
+el.innerText=i;
+if(i>=end)clearInterval(t);
+},30);
 }
 
-/* 🔥 QUESTO È QUELLO CHE TI MANCAVA */
-.container{
-display:flex;
-gap:24px;
-max-width:1100px;
-margin:auto;
-padding:20px;
-align-items:flex-start;
-}
+count("s1",12);
+count("s2",3);
+count("s3",8);
 
-/* SIDEBAR FIX */
-.sidebar{
-width:280px;
-position:sticky;
-top:20px;
-}
+// LIGHTBOX
+const imgs=document.querySelectorAll(".gallery img");
 
-/* MAIN FIX */
-.main{
-flex:1;
-display:flex;
-flex-direction:column;
-gap:16px;
+imgs.forEach(img=>{
+img.onclick=()=>{
+window.open(img.src,"_blank");
 }
-
-/* CARDS MIGLIORATE */
-.card, .hero, .profile, .block{
-background:rgba(255,255,255,0.04);
-border:1px solid rgba(255,255,255,0.08);
-border-radius:14px;
-padding:16px;
-backdrop-filter:blur(10px);
-}
-
-/* TIMELINE PIÙ BELLA */
-.timeline div{
-padding:8px;
-border-left:2px solid #6366f1;
-margin:6px 0;
-padding-left:10px;
-}
+});
