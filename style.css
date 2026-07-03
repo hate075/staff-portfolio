@@ -1,0 +1,56 @@
+// COUNTERS (smooth)
+function animate(id,end){
+let el=document.getElementById(id);
+let i=0;
+let t=setInterval(()=>{
+i++;
+el.textContent=i;
+if(i>=end)clearInterval(t);
+},30);
+}
+
+animate("s1",10);
+animate("s2",3);
+animate("s3",8);
+
+// LIGHTBOX
+const imgs=document.querySelectorAll(".gallery img");
+const box=document.getElementById("lightbox");
+const boxImg=box.querySelector("img");
+
+imgs.forEach(i=>{
+i.onclick=()=>{
+box.style.display="flex";
+boxImg.src=i.src;
+}
+});
+
+box.onclick=()=>box.style.display="none";
+
+// SOFT PARTICLES
+const c=document.getElementById("bg");
+const ctx=c.getContext("2d");
+
+c.width=innerWidth;
+c.height=innerHeight;
+
+let p=Array.from({length:60},()=>({
+x:Math.random()*c.width,
+y:Math.random()*c.height,
+r:Math.random()*1.5
+}));
+
+function draw(){
+ctx.clearRect(0,0,c.width,c.height);
+ctx.fillStyle="rgba(255,255,255,0.6)";
+
+p.forEach(s=>{
+ctx.beginPath();
+ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+ctx.fill();
+});
+
+requestAnimationFrame(draw);
+}
+
+draw();
